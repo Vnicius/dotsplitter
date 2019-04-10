@@ -10,7 +10,10 @@ class CheckAbbreviations:
 
     def check(self, abbrev):
 
-        result = self.abbrev_list.loc[self.abbrev_list['abbrev'] == abbrev]
+        result = self.abbrev_list.loc[self.abbrev_list['abbrev'] == abbrev.lower()]
+
+        if result.empty:
+            result = self.abbrev_list.loc[self.abbrev_list['abbrev'] == abbrev.replace('.', '').lower()]
 
         return not result.empty
 
