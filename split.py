@@ -3,10 +3,12 @@ import re
 import spacy
 from utils.checkabbreviation import CheckAbbreviations
 import utils.arguments as arguments
-from utils.textsplitter import text_splitter
+from utils.textsplitter import TextSplitter
 
-def dot_splitter(text):
-    words = text_splitter(text.replace('\n', '').strip())
+text_splitter = TextSplitter()
+
+def dot_splitter(text, out_file=None):
+    words = text_splitter.split(text.replace('\n', '').strip())
     
     split_indexes = []
 
@@ -51,19 +53,25 @@ def dot_splitter(text):
     # print(split_indexes)
     if len(split_indexes):
         if len(split_indexes) == 1 and split_indexes[0] == len(words) - 1:
-            print(' '.join(words))
+            show_result(' '.join(words), out_file)
         else:
             past = 0
 
             for split_i in split_indexes:
-                print(' '.join(words[past: split_i + 1]))
+                show_result(' '.join(words[past: split_i + 1]), out_file)
                 past = split_i + 1
             
             if past != len(words):
-                print(' '.join(words[past:]))
+                show_result(' '.join(words[past:]), out_file)
 
     else:
-        print(' '.join(words))
+        show_result(' '.join(words), out_file)
+
+def show_result(text, out_file=None):
+    if out_file:
+        out_file.write(text + '\n')
+    else:
+        print(text)
 
 def has_symbols(word):
     symbols = ['"', '(', ')', '[', ']']
@@ -90,12 +98,11 @@ if __name__ == '__main__':
 
     # create the abbreviation checker
     abbrev_checker = CheckAbbreviations(args.abbrev_path)
-
-    text = input()
+    text_splitter = TextSplitter()
 
     try:
-        while text:
-            dot_splitter(text)
+        while True:
             text = input()
+            dot_splitter(text)
     except EOFError:
         pass
