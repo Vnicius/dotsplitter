@@ -100,9 +100,19 @@ if __name__ == '__main__':
     abbrev_checker = CheckAbbreviations(args.abbrev_path)
     text_splitter = TextSplitter()
 
+    out_file = None
+
+    if args.output:
+        out_file = open(args.output, 'w')
+
     try:
-        while True:
-            text = input()
-            dot_splitter(text)
+        if args.input:
+            with open(args.input, 'r') as input_file:
+                while True:
+                    dot_splitter(input_file.readline(), out_file=out_file)
+        else:
+            while True:
+                text = input()
+                dot_splitter(text, out_file=out_file)
     except EOFError:
         pass
