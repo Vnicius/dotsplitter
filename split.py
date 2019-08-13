@@ -7,9 +7,10 @@ from utils.textsplitter import TextSplitter
 
 text_splitter = TextSplitter()
 
+
 def dot_splitter(text, out_file=None):
     words = text_splitter.split(text.replace('\n', '').strip())
-    
+
     split_indexes = []
 
     for index, word in enumerate(words):
@@ -25,7 +26,7 @@ def dot_splitter(text, out_file=None):
                         continue
                 except:
                     pass
-                    
+
                 if not abbrev_checker.check(word):
                     if index < len(words) - 1:
                         current_word = nlp(word)
@@ -33,16 +34,16 @@ def dot_splitter(text, out_file=None):
 
                         #print(current_word.text, current_word[0].pos_)
                         #print(next_word[0].text, next_word[0].pos_)
-                        
+
                         if next_word[0].pos_ == 'PUNCT' and has_symbols(next_word.text):
                             split_indexes.append(index)
 
-                        elif next_word[0].pos_ == 'ADP' and '.' not in next_word.text: 
+                        elif next_word[0].pos_ == 'ADP' and '.' not in next_word.text:
                             pass
-                        
+
                         elif next_word[0].pos_ == 'PUNCT' and \
-                            re.search(r'\w+', next_word[0].text):
-                                pass
+                                re.search(r'\w+', next_word[0].text):
+                            pass
 
                         elif next_word[0].pos_ != 'PROPN' and \
                             '.' not in next_word.text and \
@@ -60,18 +61,20 @@ def dot_splitter(text, out_file=None):
             for split_i in split_indexes:
                 show_result(' '.join(words[past: split_i + 1]), out_file)
                 past = split_i + 1
-            
+
             if past != len(words):
                 show_result(' '.join(words[past:]), out_file)
 
     else:
         show_result(' '.join(words), out_file)
 
+
 def show_result(text, out_file=None):
     if out_file:
         out_file.write(text + '\n')
     else:
         print(text)
+
 
 def has_symbols(word):
     symbols = ['"', '(', ')', '[', ']']
@@ -80,9 +83,9 @@ def has_symbols(word):
     for s in symbols:
         if s in word:
             has_symbol = True
-    
+
     return has_symbol
-    
+
 
 if __name__ == '__main__':
 
@@ -108,7 +111,7 @@ if __name__ == '__main__':
     try:
         if args.input:
             with open(args.input, 'r') as input_file:
-                while True:
+                for line in input_file:
                     dot_splitter(input_file.readline(), out_file=out_file)
         else:
             while True:
